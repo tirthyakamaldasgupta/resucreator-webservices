@@ -14,7 +14,8 @@ public class Controller {
 
     @PostMapping("/register")
     public String registerUser(@Valid @RequestBody User user) {
-        System.out.println(user.getFirstName());
+        repository.save(user);
+        // System.out.println(user.getFirstName());
         return "OK";
     }
 }
