@@ -10,6 +10,7 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.authorizeRequests().antMatchers("/register").permitAll().and().authorizeRequests();
+        http.csrf().disable();
 
         return http.build();
     }
