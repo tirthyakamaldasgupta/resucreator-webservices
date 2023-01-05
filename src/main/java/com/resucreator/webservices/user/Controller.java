@@ -3,6 +3,9 @@ package com.resucreator.webservices.user;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.ResponseEntity.BodyBuilder;
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,15 +20,19 @@ public class Controller {
     Argon2PasswordEncoder passwordEncoder;
 
     @PostMapping("/register")
-    public String registerUser(@Valid @RequestBody User user) {
-        if (repository.existsByUserName(user.getUserName())) {}
+    public ResponseEntity<String> registerUser(@Valid @RequestBody User user) {
+        if (repository.existsByUserName(user.getUserName())) {
+            return ResponseEntity.badRequest().body("This username is already taken.");
+        }
 
-        if (repository.existsByEmail(user.getEmail())) {}
+        if (repository.existsByEmail(user.getEmail())) {
+            return ResponseEntity.badRequest().body("This email is already taken.");
+        }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         repository.save(user);
 
-        return user.getId();
+        return ResponseEntity.status(HttpStatus.CREATED).body(user.getId());
     }
 }
