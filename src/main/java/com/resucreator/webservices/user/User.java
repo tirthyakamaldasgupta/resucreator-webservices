@@ -29,7 +29,7 @@ public class User {
     private String lastName;
 
     @NotBlank
-    private String username;
+    private String userName;
 
     @NotBlank
     @Email
