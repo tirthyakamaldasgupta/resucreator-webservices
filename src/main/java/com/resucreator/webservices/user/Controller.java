@@ -1,5 +1,8 @@
 package com.resucreator.webservices.user;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,19 +23,27 @@ public class Controller {
     Argon2PasswordEncoder passwordEncoder;
 
     @PostMapping("/register")
-    public ResponseEntity<String> registerUser(@Valid @RequestBody User user) {
+    public ResponseEntity<Map<String, String>> registerUser(@Valid @RequestBody User user) {
+        Map<String, String> body = new HashMap<>();
+        
         if (repository.existsByUserName(user.getUserName())) {
-            return ResponseEntity.badRequest().body("This username is already taken.");
+            body.put("error", "This username is already taken.");
+
+            return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
         }
 
         if (repository.existsByEmail(user.getEmail())) {
-            return ResponseEntity.badRequest().body("This email is already taken.");
+            body.put("error", "This email is already taken.");
+
+            return new ResponseEntity<>(body, HttpStatus.BAD_GATEWAY);
         }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         repository.save(user);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(user.getId());
+        body.put("success", "The user has been created.");
+
+        return new ResponseEntity<>(body, HttpStatus.CREATED);
     }
 }
