@@ -24,26 +24,49 @@ public class Controller {
 
     @PostMapping("/register")
     public ResponseEntity<Map<String, String>> registerUser(@Valid @RequestBody User user) {
-        Map<String, String> body = new HashMap<>();
+        Map<String, String> responseBody = new HashMap<>();
         
         if (repository.existsByUserName(user.getUserName())) {
-            body.put("error", "This username is already taken.");
+            responseBody.put("error", "This username is already taken.");
 
-            return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(responseBody, HttpStatus.BAD_REQUEST);
         }
 
         if (repository.existsByEmail(user.getEmail())) {
-            body.put("error", "This email is already taken.");
+            responseBody.put("error", "This email is already taken.");
 
-            return new ResponseEntity<>(body, HttpStatus.BAD_GATEWAY);
+            return new ResponseEntity<>(responseBody, HttpStatus.BAD_REQUEST);
         }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         repository.save(user);
 
-        body.put("success", "The user has been created.");
+        responseBody.put("success", "The user has been created.");
 
-        return new ResponseEntity<>(body, HttpStatus.CREATED);
+        return new ResponseEntity<>(responseBody, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/authenticate")
+    public ResponseEntity<Map<String, String>> loginUser(@RequestBody User returningUser) {
+        Map<String, String> responseBody = new HashMap<>();
+
+        String returningUserUserName = returningUser.getUserName();
+
+        if (repository.existsByUserName(returningUserUserName)) {
+            User user = repository.findByUserName(returningUserUserName);
+
+            if (passwordEncoder.matches(user.getPassword(), passwordEncoder.encode(returningUser.getPassword()))) {
+                return new ResponseEntity<>(responseBody, HttpStatus.FOUND);
+            }
+            
+            responseBody.put("error", "Please provide the correct password.");
+
+            return new ResponseEntity<>(responseBody, HttpStatus.BAD_REQUEST);
+        }
+
+        responseBody.put("error", "No user exists with the particular username.");
+
+        return new ResponseEntity<>(responseBody, HttpStatus.NOT_FOUND);
     }
 }
