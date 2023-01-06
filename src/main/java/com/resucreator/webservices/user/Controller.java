@@ -8,7 +8,6 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.ResponseEntity.BodyBuilder;
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -56,7 +55,7 @@ public class Controller {
         if (repository.existsByUserName(returningUserUserName)) {
             User user = repository.findByUserName(returningUserUserName);
 
-            if (passwordEncoder.matches(user.getPassword(), passwordEncoder.encode(returningUser.getPassword()))) {
+            if (passwordEncoder.matches(returningUser.getPassword(), user.getPassword())) {
                 return new ResponseEntity<>(responseBody, HttpStatus.FOUND);
             }
             
