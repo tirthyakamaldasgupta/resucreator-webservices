@@ -3,7 +3,6 @@ package com.resucreator.webservices.user;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import javax.validation.Valid;
 
