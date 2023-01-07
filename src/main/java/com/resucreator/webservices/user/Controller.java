@@ -79,7 +79,7 @@ public class Controller {
                 responseBody.put("access_token", jsonWebToken);
                 responseBody.put("expires_in", jwtExpiration);
 
-                return new ResponseEntity<>(responseBody, HttpStatus.FOUND);
+                return new ResponseEntity<>(responseBody, HttpStatus.OK);
             }
 
             responseBody.put("error", "Please provide the correct password.");
