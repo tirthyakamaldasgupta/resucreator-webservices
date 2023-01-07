@@ -3,6 +3,7 @@ package com.resucreator.webservices.user;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import javax.validation.Valid;
 
@@ -62,11 +63,13 @@ public class Controller {
             User user = repository.findByUserName(returningUserUserName);
 
             if (passwordEncoder.matches(returningUser.getPassword(), user.getPassword())) {
-                Long jwtExpiration = System.currentTimeMillis() + 864000000;
+                Integer jwtExpiration = 3600;
+
+                Long jwtExpirationInMilliSeconds = System.currentTimeMillis() + (jwtExpiration * 1000);
 
                 String jsonWebToken = Jwts.builder()
                     .setSubject(user.getUserName())
-                    .setExpiration(new Date(jwtExpiration))
+                    .setExpiration(new Date(jwtExpirationInMilliSeconds))
                     .claim("userName", user.getUserName())
                     .claim("email", user.getEmail())
                     .signWith(SignatureAlgorithm.HS256, "secret")
