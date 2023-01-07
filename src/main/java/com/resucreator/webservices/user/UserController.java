@@ -22,7 +22,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 @RequestMapping("/api/auth")
 public class UserController {
     @Autowired
-    UserRepository repository;
+    UserRepository userRepository;
 
     @Autowired
     Argon2PasswordEncoder passwordEncoder;
@@ -31,13 +31,13 @@ public class UserController {
     public ResponseEntity<Map<String, String>> registerUser(@Valid @RequestBody User user) {
         Map<String, String> responseBody = new HashMap<>();
 
-        if (repository.existsByUserName(user.getUserName())) {
+        if (userRepository.existsByUserName(user.getUserName())) {
             responseBody.put("error", "That username is already taken.");
 
             return new ResponseEntity<>(responseBody, HttpStatus.BAD_REQUEST);
         }
 
-        if (repository.existsByEmail(user.getEmail())) {
+        if (userRepository.existsByEmail(user.getEmail())) {
             responseBody.put("error", "That email is already taken.");
 
             return new ResponseEntity<>(responseBody, HttpStatus.BAD_REQUEST);
@@ -45,7 +45,7 @@ public class UserController {
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
-        repository.save(user);
+        userRepository.save(user);
 
         responseBody.put("success", "The user has been created.");
 
@@ -58,8 +58,8 @@ public class UserController {
 
         String returningUserUserName = returningUser.getUserName();
 
-        if (repository.existsByUserName(returningUserUserName)) {
-            User user = repository.findByUserName(returningUserUserName);
+        if (userRepository.existsByUserName(returningUserUserName)) {
+            User user = userRepository.findByUserName(returningUserUserName);
 
             if (passwordEncoder.matches(returningUser.getPassword(), user.getPassword())) {
                 Integer jwtExpiration = 3600;
