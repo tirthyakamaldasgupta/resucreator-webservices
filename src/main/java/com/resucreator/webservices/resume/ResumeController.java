@@ -1,6 +1,5 @@
 package com.resucreator.webservices.resume;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,7 +16,6 @@ import com.resucreator.webservices.user.UserRepository;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureException;
 
 @RestController
 @RequestMapping("/api/resumes")
