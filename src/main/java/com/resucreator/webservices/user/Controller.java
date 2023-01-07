@@ -1,5 +1,6 @@
 package com.resucreator.webservices.user;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,9 +12,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+
 @RestController
+@RequestMapping("/api/auth")
 public class Controller {
     @Autowired
     Repository repository;
@@ -24,15 +30,15 @@ public class Controller {
     @PostMapping("/register")
     public ResponseEntity<Map<String, String>> registerUser(@Valid @RequestBody User user) {
         Map<String, String> responseBody = new HashMap<>();
-        
+
         if (repository.existsByUserName(user.getUserName())) {
-            responseBody.put("error", "This username is already taken.");
+            responseBody.put("error", "That username is already taken.");
 
             return new ResponseEntity<>(responseBody, HttpStatus.BAD_REQUEST);
         }
 
         if (repository.existsByEmail(user.getEmail())) {
-            responseBody.put("error", "This email is already taken.");
+            responseBody.put("error", "That email is already taken.");
 
             return new ResponseEntity<>(responseBody, HttpStatus.BAD_REQUEST);
         }
@@ -47,8 +53,8 @@ public class Controller {
     }
 
     @PostMapping("/authenticate")
-    public ResponseEntity<Map<String, String>> loginUser(@RequestBody User returningUser) {
-        Map<String, String> responseBody = new HashMap<>();
+    public ResponseEntity<Map<String, Object>> loginUser(@RequestBody User returningUser) {
+        Map<String, Object> responseBody = new HashMap<>();
 
         String returningUserUserName = returningUser.getUserName();
 
@@ -56,9 +62,23 @@ public class Controller {
             User user = repository.findByUserName(returningUserUserName);
 
             if (passwordEncoder.matches(returningUser.getPassword(), user.getPassword())) {
+                Long jwtExpiration = System.currentTimeMillis() + 864000000;
+
+                String jsonWebToken = Jwts.builder()
+                    .setSubject(user.getUserName())
+                    .setExpiration(new Date(jwtExpiration))
+                    .claim("userName", user.getUserName())
+                    .claim("email", user.getEmail())
+                    .signWith(SignatureAlgorithm.HS256, "secret")
+                    .compact();
+
+                responseBody.put("token_type", "bearer");
+                responseBody.put("access_token", jsonWebToken);
+                responseBody.put("expires_in", jwtExpiration);
+
                 return new ResponseEntity<>(responseBody, HttpStatus.FOUND);
             }
-            
+
             responseBody.put("error", "Please provide the correct password.");
 
             return new ResponseEntity<>(responseBody, HttpStatus.BAD_REQUEST);
