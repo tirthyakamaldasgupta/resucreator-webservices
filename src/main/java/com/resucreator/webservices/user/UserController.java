@@ -20,9 +20,9 @@ import io.jsonwebtoken.SignatureAlgorithm;
 
 @RestController
 @RequestMapping("/api/auth")
-public class Controller {
+public class UserController {
     @Autowired
-    Repository repository;
+    UserRepository repository;
 
     @Autowired
     Argon2PasswordEncoder passwordEncoder;
