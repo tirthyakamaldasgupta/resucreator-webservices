@@ -30,27 +30,6 @@ public class ResumeController {
     public ResponseEntity<Map<String, String>> getAllResumes(@RequestHeader (name="Authorization") String token) {
         Map<String, String> responseBody = new HashMap<>();
 
-        if (token != null && token.startsWith("Bearer ")) {
-            String jsonWebToken = token.substring(7);
-
-            Claims claims = Jwts.parser()
-                .setSigningKey("secret")
-                .parseClaimsJws(jsonWebToken)
-                .getBody();
-
-            String userName = claims.getSubject();
-
-            User user = userRepository.findByUserName(userName);
-
-            if (user == null) {
-                responseBody.put("error", "No user exists.");
-
-                return new ResponseEntity<>(responseBody, HttpStatus.BAD_REQUEST);
-            }
-        }
-
-        responseBody.put("error", "The Authorization header should contain a Bearer token.");
-
-        return new ResponseEntity<>(responseBody, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(responseBody, HttpStatus.OK);
     }
 }
