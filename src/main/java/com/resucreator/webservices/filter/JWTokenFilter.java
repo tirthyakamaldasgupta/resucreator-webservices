@@ -14,12 +14,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-public class JwtTokenFilter extends OncePerRequestFilter {
+public class JWTokenFilter extends OncePerRequestFilter {
     @Autowired
     private UserRepository userRepository;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
         String token = request.getHeader("Authorization");
 
         if (token != null && token.startsWith("Bearer ")) {
@@ -27,12 +28,12 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
             try {
                 Claims claims = Jwts.parser()
-                    .setSigningKey("secret")
-                    .parseClaimsJws(jsonWebToken)
-                    .getBody();
+                        .setSigningKey("secret")
+                        .parseClaimsJws(jsonWebToken)
+                        .getBody();
 
                 String userName = claims.getSubject();
-                
+
                 if (userRepository.findByUserName(userName) == null) {
                     response.sendError(HttpServletResponse.SC_NOT_FOUND, "No user exists.");
 
@@ -45,7 +46,8 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             } catch (Exception e) {
             }
         } else {
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "The Authorization header should contain a Bearer token.");
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED,
+                    "The Authorization header should contain a Bearer token.");
         }
     }
 }
