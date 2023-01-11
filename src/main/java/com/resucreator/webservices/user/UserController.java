@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.resucreator.webservices.dto.user.EmailChecker;
 import com.resucreator.webservices.dto.user.UserNameChecker;
 
 import io.jsonwebtoken.Jwts;
@@ -34,6 +35,14 @@ public class UserController {
     @PostMapping("/check-username")
     public ResponseEntity<Map<String, String>> checkUsername(@Valid @RequestBody UserNameChecker userNameChecker) {
         if (userRepository.existsByUserName(userNameChecker.getUserName())) {
+            return new ResponseEntity<>(HttpStatus.FOUND);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @PostMapping("/check-email")
+    public ResponseEntity<Map<String, String>> checkEmail(@Valid @RequestBody EmailChecker emailChecker) {
+        if (userRepository.existsByEmail(emailChecker.getEmail())) {
             return new ResponseEntity<>(HttpStatus.FOUND);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
