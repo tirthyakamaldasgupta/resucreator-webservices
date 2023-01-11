@@ -37,7 +37,7 @@ public class UserController {
         if (userRepository.existsByUserName(userNameChecker.getUserName())) {
             return new ResponseEntity<>(HttpStatus.FOUND);
         }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @PostMapping("/check-email")
@@ -45,7 +45,7 @@ public class UserController {
         if (userRepository.existsByEmail(emailChecker.getEmail())) {
             return new ResponseEntity<>(HttpStatus.FOUND);
         }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @PostMapping("/register")
