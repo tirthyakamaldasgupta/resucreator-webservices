@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.resucreator.webservices.dto.user.UserNameChecker;
+
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
@@ -28,6 +30,14 @@ public class UserController {
 
     @Autowired
     Argon2PasswordEncoder passwordEncoder;
+
+    @PostMapping("/check-username")
+    public ResponseEntity<Map<String, String>> checkUsername(@Valid @RequestBody UserNameChecker userNameChecker) {
+        if (userRepository.existsByUserName(userNameChecker.getUserName())) {
+            return new ResponseEntity<>(HttpStatus.FOUND);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
 
     @PostMapping("/register")
     public ResponseEntity<Map<String, String>> registerUser(@Valid @RequestBody User user) {
