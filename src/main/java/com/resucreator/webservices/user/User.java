@@ -1,6 +1,7 @@
 package com.resucreator.webservices.user;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 
 import java.util.Set;
 
@@ -42,6 +43,7 @@ public class User {
     private String email;
 
     @NotBlank
+    @Pattern(regexp="^(?=.*[A-Z])(?=.*[!@#$%^&*])(?=.*[0-9])(?=.*[a-z]).{8,}$")
     private String password;
 
     @DBRef
