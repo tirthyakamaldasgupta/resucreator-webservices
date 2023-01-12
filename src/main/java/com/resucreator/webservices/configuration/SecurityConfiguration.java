@@ -6,7 +6,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.DefaultSecurityFilterChain;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
-import com.resucreator.webservices.filter.JwtTokenFilter;
+import com.resucreator.webservices.filter.JWTokenFilter;
 
 @Configuration
 public class SecurityConfiguration {
@@ -15,7 +15,7 @@ public class SecurityConfiguration {
         http.authorizeRequests()
             .antMatchers("/api/auth/register", "/api/auth/authenticate").permitAll()
             .and().authorizeRequests();
-        http.addFilterBefore(new JwtTokenFilter(), BasicAuthenticationFilter.class).antMatcher("/api/resumes**");
+        http.addFilterBefore(new JWTokenFilter(), BasicAuthenticationFilter.class).antMatcher("/api/resumes**");
         http.csrf().disable();
     
         return http.build();

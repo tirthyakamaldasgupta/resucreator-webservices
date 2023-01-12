@@ -10,15 +10,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.resucreator.webservices.dto.user.EmailChecker;
+import com.resucreator.webservices.dto.user.UserNameChecker;
+
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
 @RestController
+@CrossOrigin("http://localhost:3000")
 @RequestMapping("/api/auth")
 public class UserController {
     @Autowired
@@ -26,6 +31,22 @@ public class UserController {
 
     @Autowired
     Argon2PasswordEncoder passwordEncoder;
+
+    @PostMapping("/check-username")
+    public ResponseEntity<Map<String, String>> checkUsername(@Valid @RequestBody UserNameChecker userNameChecker) {
+        if (userRepository.existsByUserName(userNameChecker.getUserName())) {
+            return new ResponseEntity<>(HttpStatus.FOUND);
+        }
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @PostMapping("/check-email")
+    public ResponseEntity<Map<String, String>> checkEmail(@Valid @RequestBody EmailChecker emailChecker) {
+        if (userRepository.existsByEmail(emailChecker.getEmail())) {
+            return new ResponseEntity<>(HttpStatus.FOUND);
+        }
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 
     @PostMapping("/register")
     public ResponseEntity<Map<String, String>> registerUser(@Valid @RequestBody User user) {
