@@ -50,4 +50,17 @@ public class JWTokenFilter extends OncePerRequestFilter {
                     "The Authorization header should contain a Bearer token.");
         }
     }
+
+    public static String getUserNameFromToken(String token) {
+        if (token != null && token.startsWith("Bearer ")) {
+            String jsonWebToken = token.substring(7);
+            Claims claims = Jwts.parser()
+                    .setSigningKey("secret")
+                    .parseClaimsJws(jsonWebToken)
+                    .getBody();
+            return claims.getSubject();
+        }
+        return null;
+    }
+    
 }
