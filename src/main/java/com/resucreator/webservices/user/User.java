@@ -8,10 +8,7 @@ import java.util.Set;
 import javax.validation.constraints.Email;
 
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
-
-import com.resucreator.webservices.resume.Resume;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -45,7 +42,4 @@ public class User {
     @NotBlank
     @Pattern(regexp="^(?=.*[A-Z])(?=.*[!@#$%^&*])(?=.*[0-9])(?=.*[a-z]).{8,}$")
     private String password;
-
-    @DBRef
-    private Set<Resume> resumes;
 }
