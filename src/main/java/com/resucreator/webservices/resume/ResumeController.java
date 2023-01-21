@@ -30,7 +30,7 @@ public class ResumeController {
     @Autowired
     UserRepository userRepository;
 
-    @GetMapping("/")
+    @GetMapping("/all")
     public ResponseEntity<Map<String, List<Resume>>> getAllResumes(@RequestHeader (name="Authorization") String token) {
         Map<String, List<Resume>> responseBody = new HashMap<>();
 

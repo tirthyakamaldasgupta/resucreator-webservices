@@ -18,7 +18,7 @@ public class WebservicesApplication {
 		return new WebMvcConfigurer() {
 			@Override
 			public void addCorsMappings(CorsRegistry corsRegistry) {
-				corsRegistry.addMapping("/**").allowedMethods("*").allowedOrigins("*");
+				corsRegistry.addMapping("/**").allowedMethods("*").allowedOrigins("http://localhost:3000");
 			}
 		};
 	}
